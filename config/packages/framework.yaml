@@ -3,6 +3,8 @@ framework:
     php_errors:
         log: true
     cache:
+        app: 'cache.adapter.memcached'
+        default_memcached_provider: 'memcached://%memcached.host%:%memcached.port%'
         prefix_seed: '%kernel.name%'
     ide: 'phpstorm'
     validation: { enable_annotations: true }

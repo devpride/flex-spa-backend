@@ -9,6 +9,7 @@
         "doctrine/doctrine-fixtures-bundle": "^3.0",
         "sensio/framework-extra-bundle": "^5.0",
         "sensiolabs/security-checker": "^4.1",
+        "symfony/cache": "^4.0",
         "symfony/console": "^4.0",
         "symfony/flex": "^1.0",
         "symfony/framework-bundle": "^4.0",
