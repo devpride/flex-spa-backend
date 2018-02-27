@@ -1,3 +1,23 @@
-#index:
-#    path: /
-#    controller: App\Controller\DefaultController::index
+api_v1:
+    resource: '../src/Controller/Api/'
+    type: 'annotation'
+    host: '{subdomain}.{domain}'
+    requirements:
+        subdomain: 'api'
+        domain: '%domain%'
+    defaults:
+        subdomain: 'api'
+        domain: '%domain%'
+
+api_404:
+    host: '{subdomain}.{domain}'
+    path: '/{path}'
+    defaults:
+        _controller: 'App\Controller\Api\RouteNotFoundController::indexAction'
+        subdomain: 'api'
+        domain: '%domain%'
+        path: ''
+    requirements:
+        subdomain: 'api'
+        domain: '%domain%'
+        path: '.*'
