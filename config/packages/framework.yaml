@@ -2,6 +2,9 @@ framework:
     secret: '%env(APP_SECRET)%'
     php_errors:
         log: true
+    session:
+        handler_id: 'snc_redis.session.handler'
+        cookie_lifetime: 86400
     cache:
         default_memcached_provider: 'memcached://%memcached.host%:%memcached.port%'
         prefix_seed: '%kernel.name%'

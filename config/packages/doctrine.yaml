@@ -1,8 +1,5 @@
 parameters:
-    database_name: '%env(MYSQL_DATABASE)%'
-    database_user: '%env(MYSQL_USER)%'
-    database_password: '%env(MYSQL_PASSWORD)%'
-    database_host: '%env(MYSQL_HOST)%'
+    mysql_dsn: '%env(DATABASE_URL)%'
 
 doctrine:
     dbal:
@@ -11,10 +8,7 @@ doctrine:
           default:
             driver: 'pdo_mysql'
             server_version: '5.7'
-            host: '%database_host%'
-            dbname: '%database_name%'
-            user: '%database_user%'
-            password: '%database_password%'
+            url: '%mysql_dsn%'
             charset: utf8mb4
     orm:
         auto_generate_proxy_classes: '%kernel.debug%'
