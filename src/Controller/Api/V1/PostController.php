@@ -5,6 +5,7 @@ namespace App\Controller\Api\V1;
 
 use App\Repository\PostRepository;
 use App\Service\Api\Component\Response\SuccessResponse;
+use App\Service\Cache\AppCacheDefault;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;

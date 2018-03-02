@@ -5,5 +5,9 @@ framework:
     cache:
         default_memcached_provider: 'memcached://%memcached.host%:%memcached.port%'
         prefix_seed: '%kernel.name%'
+        pools:
+            app.cache.default:
+                adapter: 'cache.adapter.memcached'
+                default_lifetime: 3600
     ide: 'phpstorm'
     validation: { enable_annotations: true }
