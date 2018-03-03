@@ -1,0 +1,15 @@
+old_sound_rabbit_mq:
+    connections:
+        default:
+            url: '%env(RABBITMQ_URL)%'
+    producers:
+        # use 'old_sound_rabbit_mq.post_producer' service to send data.
+        post:
+            connection: 'default'
+            exchange_options: { name: 'post', type: direct }
+    consumers:
+        post:
+            connection: 'default'
+            exchange_options: { name: 'post', type: direct }
+            queue_options: { name: 'post'}
+            callback: 'App\Consumer\PostConsumer'

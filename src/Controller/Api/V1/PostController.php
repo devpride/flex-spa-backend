@@ -10,6 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -56,6 +57,26 @@ class PostController extends Controller
                 $results
             )
         );
+    }
+
+    /**
+     * @Route(path="/", name="post_create")
+     * @Method("POST")
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function create(Request $request) : Response
+    {
+        $message = [
+            'title' => $request->get('title'),
+            'content' => $request->get('content'),
+        ];
+
+        $this->container->get('old_sound_rabbit_mq.post_producer')->publish(serialize($message));
+
+        return new SuccessResponse();
     }
 }
 
