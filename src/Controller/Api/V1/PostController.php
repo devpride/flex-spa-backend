@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Api\V1;
 
+use App\Entity\Post;
 use App\Repository\PostRepository;
 use App\Service\Api\Component\Response\SuccessResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
@@ -29,6 +30,32 @@ class PostController extends Controller
     public function list(int $page, PostRepository $repository) : Response
     {
         return new SuccessResponse($repository->findLatest($page)->getIterator()->getArrayCopy());
+    }
+
+    /**
+     * @Route(path="/search/{query}", name="post_search_by_query")
+     * @Method("GET")
+     * @Cache(smaxage="10")
+     * @param string $query
+     *
+     * @return Response
+     */
+    public function search(string $query) : Response
+    {
+        $results = $this->container->get('fos_elastica.finder.app.post')->find($query);
+
+        return new SuccessResponse(
+            array_map(
+                function (Post $result) {
+                    return [
+                        'title' => $result->getTitle(),
+                        'tags' => array_map('strval', $result->getTags()->getValues()),
+                        'author' => (string) $result->getAuthor(),
+                    ];
+                },
+                $results
+            )
+        );
     }
 }
 

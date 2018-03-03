@@ -1,0 +1,25 @@
+# Read the documentation: https://github.com/FriendsOfSymfony/FOSElasticaBundle/blob/master/Resources/doc/setup.md
+fos_elastica:
+    clients:
+        default: { host: '%env(ELASTICSEARCH_HOST)%', port: '%env(ELASTICSEARCH_PORT)%' }
+    indexes:
+        app:
+            settings:
+                index:
+                    analysis:
+                        analyzer:
+                            my_analyzer:
+                                type: snowball
+                                language: English
+            types:
+                post:
+                    properties:
+                        author: { boost: 50, analyzer: my_analyzer }
+                        tags: { boost: 20, analyzer: my_analyzer }
+                        title: { boost: 10, analyzer: my_analyzer }
+                        content: { boost: 2, analyzer: my_analyzer }
+                    persistence:
+                        driver: orm
+                        model: App\Entity\Post
+                        provider: ~
+                        finder: ~
