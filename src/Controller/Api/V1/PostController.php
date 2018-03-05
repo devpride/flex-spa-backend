@@ -6,6 +6,7 @@ namespace App\Controller\Api\V1;
 use App\Entity\Post;
 use App\Repository\PostRepository;
 use App\Service\Api\Component\Response\SuccessResponse;
+use App\Service\Tracking\Statsd\Client\DefaultClient;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -28,8 +29,10 @@ class PostController extends Controller
      *
      * @return Response
      */
-    public function list(int $page, PostRepository $repository) : Response
+    public function list(int $page, PostRepository $repository, DefaultClient $client) : Response
     {
+        $client->increment('PostController.list', 1);
+
         return new SuccessResponse($repository->findLatest($page)->getIterator()->getArrayCopy());
     }
 

@@ -7,6 +7,8 @@ parameters:
     app.notifications.email_sender: 'info@%domain%'
     memcached.host: '%env(MEMCACHED_HOST)%'
     memcached.port: '%env(MEMCACHED_PORT)%'
+    statsd.host: '%env(STATSD_HOST)%'
+    statsd.port: '%env(STATSD_PORT)%'
 
 services:
     # default configuration for services in *this* file
@@ -32,7 +34,15 @@ services:
         tags: ['controller.service_arguments']
 
     App\Service\Cache\AppCacheDefault:
-      arguments: ['@app.cache.default']
+        arguments: ['@app.cache.default']
+
+    App\Service\Tracking\Statsd\Client\DefaultClient:
+        factory: 'App\Service\Tracking\Statsd\StatsdClientFactory:createClient'
+        arguments:
+          - '%statsd.host%'
+          - '%statsd.port%'
+          - 'App.Default'
+          - 'App\Service\Tracking\Statsd\Client\DefaultClient'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
