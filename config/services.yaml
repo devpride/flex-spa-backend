@@ -34,7 +34,7 @@ services:
         tags: ['controller.service_arguments']
 
     App\Service\Cache\AppCacheDefault:
-        arguments: ['@app.cache.default']
+        $cachePool: '@app.cache.default'
 
     App\Service\Tracking\Statsd\Client\DefaultClient:
         factory: 'App\Service\Tracking\Statsd\StatsdClientFactory:createClient'

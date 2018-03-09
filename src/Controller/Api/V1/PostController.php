@@ -65,7 +65,6 @@ class PostController extends Controller
     /**
      * @Route(path="/", name="post_create")
      * @Method("POST")
-     *
      * @param Request $request
      *
      * @return Response
@@ -78,6 +77,32 @@ class PostController extends Controller
         ];
 
         $this->container->get('old_sound_rabbit_mq.post_producer')->publish(serialize($message));
+
+        return new SuccessResponse();
+    }
+
+    /**
+     * @Route(path="/mail", name="post_mail")
+     * @Method("GET")
+     * @param Request       $request
+     * @param \Swift_Mailer $mailer
+     *
+     * @return Response
+     */
+    public function mail(Request $request, \Swift_Mailer $mailer) : Response
+    {
+        $message = (new \Swift_Message('Hello Email'))
+            ->setFrom('info@flexspa.com')
+            ->setTo('elijah.zakirov@gmail.com')
+            ->setBody(
+                $this->renderView(
+                    'emails/registration.html.twig',
+                    ['name' => $request->get('name', 'John Doe')]
+                ),
+                'text/html'
+            );
+
+        $mailer->send($message);
 
         return new SuccessResponse();
     }
