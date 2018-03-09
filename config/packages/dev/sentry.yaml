@@ -1,0 +1,4 @@
+sentry:
+    options:
+        curl_method: 'exec'
+    dsn: '%env(SENTRY_DSN)%'
