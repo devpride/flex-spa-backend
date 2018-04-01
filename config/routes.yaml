@@ -21,3 +21,14 @@ api_404:
         subdomain: 'api'
         domain: '%domain%'
         path: '.*'
+
+admin:
+    resource: 'App\Controller\AdminController'
+    type: 'annotation'
+    host: '{subdomain}.{domain}'
+    requirements:
+        subdomain: 'admin'
+        domain: '%domain%'
+    defaults:
+        subdomain: 'admin'
+        domain: '%domain%'

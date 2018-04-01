@@ -1,5 +1,6 @@
 framework:
     secret: '%env(APP_SECRET)%'
+    translator: { fallbacks: [ "en" ] }
     php_errors:
         log: true
     session:

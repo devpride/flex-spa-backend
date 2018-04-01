@@ -1,0 +1,6 @@
+easy_admin:
+    entities:
+        - App\Entity\Post
+        - App\Entity\Tag
+        - App\Entity\Comment
+        - App\Entity\User

@@ -8,6 +8,7 @@
         "ext-iconv": "*",
         "doctrine/doctrine-fixtures-bundle": "^3.0",
         "domnikl/statsd": "^2.0",
+        "easycorp/easyadmin-bundle": "^1.17",
         "friendsofsymfony/elastica-bundle": "^5.0",
         "lexik/jwt-authentication-bundle": "^2.4",
         "php-amqplib/rabbitmq-bundle": "^1.14",
