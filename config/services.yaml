@@ -36,6 +36,16 @@ services:
     App\Service\Cache\AppCacheDefault:
         $cachePool: '@app.cache.default'
 
+    App\Service\Search\PostFinder:
+        $finder: '@fos_elastica.finder.app.post'
+
+    App\Service\Creation\Post\PostCreator:
+        arguments:
+          - '@old_sound_rabbit_mq.post_producer'
+          - '@doctrine.orm.entity_manager'
+        calls:
+          - ['setLogger', ['@monolog.logger']]
+
     App\Service\Tracking\Statsd\Client\DefaultClient:
         factory: 'App\Service\Tracking\Statsd\StatsdClientFactory:createClient'
         arguments:

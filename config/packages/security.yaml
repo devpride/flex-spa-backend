@@ -29,9 +29,9 @@ security:
 
         admin:
             host: ^admin.
-#            stateless: false
+            stateless: false
             anonymous: true
-#            http_basic: ~
+            http_basic: ~
 
         main:
             anonymous: true
@@ -47,5 +47,5 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-#         - { host: ^admin., roles: ROLE_ADMIN }
+         - { host: ^admin., roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }

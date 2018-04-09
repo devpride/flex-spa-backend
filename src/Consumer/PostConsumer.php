@@ -5,10 +5,13 @@ namespace App\Consumer;
 
 use App\Entity\Post;
 use App\Entity\User;
+use App\Service\Creation\Post\PostCreator;
+use App\Service\Creation\Post\PostDto;
 use App\Utils\Slugger;
 use Doctrine\Common\Persistence\ObjectManager;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class PostConsumer
@@ -16,41 +19,41 @@ use PhpAmqpLib\Message\AMQPMessage;
 class PostConsumer implements ConsumerInterface
 {
     /**
-     * @var ObjectManager
+     * @var PostCreator
      */
-    private $em;
+    private $creator;
 
     /**
-     * @param ObjectManager $em
+     * @var LoggerInterface
      */
-    public function __construct(ObjectManager $em)
+    private $logger;
+
+    /**
+     * @param PostCreator     $creator
+     * @param LoggerInterface $logger
+     */
+    public function __construct(PostCreator $creator, LoggerInterface $logger)
     {
-        $this->em = $em;
+        $this->creator = $creator;
+        $this->logger = $logger;
     }
 
     /**
      * @param AMQPMessage $msg
      *
      * @return bool
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
-     * @throws \Doctrine\ORM\TransactionRequiredException
      */
     public function execute(AMQPMessage $msg)
     {
-        $messageBody = unserialize($msg->getBody());
+        try {
+            /** @var PostDto $postDto */
+            $postDto = unserialize($msg->getBody());
+            $this->creator->create($postDto);
+        } catch (\Throwable $t) {
+            $this->logger->error('Post creation consume failed.', ['exception' => $t]);
 
-        $user = $this->em->find(User::class, 1);
-
-        $post = new Post();
-        $post->setTitle($messageBody['title'] ?? 'Unknown title');
-        $post->setContent($messageBody['content'] ?? 'Empty content');
-        $post->setSlug(Slugger::slugify($post->getTitle()));
-        $post->setSummary('summary');
-        $post->setAuthor($user);
-
-        $this->em->persist($post);
-        $this->em->flush();
+            return false;
+        }
 
         return true;
     }

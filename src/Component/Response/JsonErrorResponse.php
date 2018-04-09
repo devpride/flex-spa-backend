@@ -32,6 +32,7 @@ class JsonErrorResponse extends JsonResponse
         }
 
         $data = [
+            'success' => false,
             'error' => [
                 'code' => $code,
                 'message' => $message,

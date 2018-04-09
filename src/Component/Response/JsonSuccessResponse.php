@@ -26,6 +26,7 @@ class JsonSuccessResponse extends JsonResponse
         }
 
         $data = [
+            'success' => true,
             'data' => $data
         ];
 

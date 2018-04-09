@@ -15,7 +15,7 @@ abstract class CacheProxy implements CacheItemPoolInterface
     /**
      * @var CacheItemPoolInterface
      */
-    private $cachePool;
+    protected $cachePool;
 
     /**
      * @param CacheItemPoolInterface $cachePool
