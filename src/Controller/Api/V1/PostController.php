@@ -233,7 +233,7 @@ class PostController extends Controller
             return new ErrorResponse('You have no permissions to delete this comment');
         }
 
-        $objectManager->remove($post);
+        $objectManager->remove($comment);
         $objectManager->flush();
 
         return new SuccessResponse(null, JsonResponse::HTTP_NO_CONTENT);
