@@ -3,11 +3,14 @@ declare(strict_types=1);
 
 namespace App\Controller\Api\V1;
 
+use App\Entity\Comment;
 use App\Entity\Post;
 use App\Entity\Tag;
 use App\Repository\PostRepository;
 use App\Service\Api\Component\Response\ErrorResponse;
 use App\Service\Api\Component\Response\SuccessResponse;
+use App\Service\Creation\Post\CommentCreator;
+use App\Service\Creation\Post\CommentDto;
 use App\Service\Creation\Post\PostCreator;
 use App\Service\Creation\Post\PostDto;
 use App\Service\Search\PostFinder;
@@ -136,6 +139,122 @@ class PostController extends Controller
         }
 
         return new SuccessResponse($this->mapPost($post));
+    }
+
+    /**
+     * @Route(path="/{id}/comments", name="post_list_comments")
+     * @Method("GET")
+     * @param int           $id
+     * @param ObjectManager $objectManager
+     *
+     * @return Response
+     */
+    public function listComments(
+        int $id,
+        ObjectManager $objectManager
+    ) : Response {
+        $post = $objectManager->getRepository(Post::class)->find($id);
+
+        if (is_null($post)) {
+            return new ErrorResponse('Post does not exist');
+        }
+
+        return new SuccessResponse(array_map([$this, 'mapComment'], $post->getComments()->getIterator()->getArrayCopy()));
+    }
+
+    /**
+     * @Route(path="/{id}/comments", name="post_add_comment")
+     * @Method("POST")
+     * @param int                   $id
+     * @param Request               $request
+     * @param ObjectManager         $objectManager
+     * @param TokenStorageInterface $tokenStorage
+     * @param CommentCreator        $creator
+     *
+     * @return Response
+     */
+    public function addComment(
+        int $id,
+        Request $request,
+        ObjectManager $objectManager,
+        TokenStorageInterface $tokenStorage,
+        CommentCreator $creator
+    ) : Response {
+        $post = $objectManager->getRepository(Post::class)->find($id);
+
+        if (is_null($post)) {
+            return new ErrorResponse('Post does not exist');
+        }
+
+        if (is_null($request->get('content'))) {
+            return new ErrorResponse('Missing required fields: "content".');
+        }
+
+        $dto = (new CommentDto())
+            ->setContent($request->get('content'))
+            ->setPublishedAt(new \DateTimeImmutable())
+            ->setPostId($post->getId())
+            ->setAuthorId($tokenStorage->getToken()->getUser()->getId());
+
+        return $creator->createAsync($dto)
+            ? new SuccessResponse(null, JsonResponse::HTTP_CREATED)
+            : new ErrorResponse('Comment creation failed');
+    }
+
+    /**
+     * @Route(path="/{id}/comments/{commentId}", name="post_delete_comment")
+     * @Method("DELETE")
+     * @param int                   $id
+     * @param int                   $commentId
+     * @param ObjectManager         $objectManager
+     * @param TokenStorageInterface $tokenStorage
+     *
+     * @return Response
+     */
+    public function deleteComment(
+        int $id,
+        int $commentId,
+        ObjectManager $objectManager,
+        TokenStorageInterface $tokenStorage
+    ) : Response {
+        $post = $objectManager->getRepository(Post::class)->find($id);
+
+        if (is_null($post)) {
+            return new ErrorResponse('Post does not exist');
+        }
+
+        $comment = $objectManager->getRepository(Comment::class)->find($commentId);
+
+        if (is_null($comment)) {
+            return new ErrorResponse('Comment does not exist');
+        }
+
+        if ($comment->getAuthor()->getId() !== $tokenStorage->getToken()->getUser()->getId()) {
+            return new ErrorResponse('You have no permissions to delete this comment');
+        }
+
+        $objectManager->remove($post);
+        $objectManager->flush();
+
+        return new SuccessResponse(null, JsonResponse::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * @param Comment $comment
+     *
+     * @return array
+     */
+    private function mapComment(Comment $comment) : array
+    {
+        return [
+            'id' => $comment->getId(),
+            'content' => $comment->getContent(),
+            'publishedAt' => $comment->getPublishedAt()->format('Y-m-d H:i:s'),
+            'author' => [
+                'id' => $comment->getAuthor()->getId(),
+                'name' => $comment->getAuthor()->getFullName(),
+            ],
+        ];
     }
 
     /**

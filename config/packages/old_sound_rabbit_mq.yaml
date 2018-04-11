@@ -7,9 +7,18 @@ old_sound_rabbit_mq:
         post:
             connection: 'default'
             exchange_options: { name: 'post', type: direct }
+        # use 'old_sound_rabbit_mq.comment_producer' service to send data.
+        comment:
+            connection: 'default'
+            exchange_options: { name: 'comment', type: direct }
     consumers:
         post:
             connection: 'default'
             exchange_options: { name: 'post', type: direct }
             queue_options: { name: 'post'}
             callback: 'App\Consumer\PostConsumer'
+        comment:
+            connection: 'default'
+            exchange_options: { name: 'comment', type: direct }
+            queue_options: { name: 'comment'}
+            callback: 'App\Consumer\CommentConsumer'

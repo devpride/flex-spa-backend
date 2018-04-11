@@ -46,6 +46,13 @@ services:
         calls:
           - ['setLogger', ['@monolog.logger']]
 
+    App\Service\Creation\Post\CommentCreator:
+        arguments:
+          - '@old_sound_rabbit_mq.comment_producer'
+          - '@doctrine.orm.entity_manager'
+        calls:
+          - ['setLogger', ['@monolog.logger']]
+
     App\Service\Tracking\Statsd\Client\DefaultClient:
         factory: 'App\Service\Tracking\Statsd\StatsdClientFactory:createClient'
         arguments:
