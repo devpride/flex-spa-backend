@@ -61,5 +61,15 @@ services:
           - 'App.Default'
           - 'App\Service\Tracking\Statsd\Client\DefaultClient'
 
+    App\Service\Security\PasswordGenerator:
+        calls:
+          - ['setMaxLength', [12]]
+
+    App\Service\Registration\PasswordlessRegistrationMailer:
+        arguments:
+          - '@old_sound_rabbit_mq.passwordless_registration_producer'
+        calls:
+          - ['setLogger', ['@monolog.logger']]
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

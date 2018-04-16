@@ -11,6 +11,10 @@ old_sound_rabbit_mq:
         comment:
             connection: 'default'
             exchange_options: { name: 'comment', type: direct }
+        # use 'old_sound_rabbit_mq.passwordless_registration_producer' service to send data.
+        passwordless_registration:
+            connection: 'default'
+            exchange_options: { name: 'passwordless_registration', type: direct }
     consumers:
         post:
             connection: 'default'
@@ -22,3 +26,8 @@ old_sound_rabbit_mq:
             exchange_options: { name: 'comment', type: direct }
             queue_options: { name: 'comment'}
             callback: 'App\Consumer\CommentConsumer'
+        passwordless_registration:
+            connection: 'default'
+            exchange_options: { name: 'passwordless_registration', type: direct }
+            queue_options: { name: 'passwordless_registration'}
+            callback: 'App\Consumer\PasswordlessRegistrationConsumer'

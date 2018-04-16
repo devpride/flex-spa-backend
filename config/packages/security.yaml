@@ -20,6 +20,12 @@ security:
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
                 require_previous_session: false
 
+        api_public:
+            host: ^api.
+            pattern:  ^/v1/users
+            stateless: true
+            anonymous: true
+
         api:
             host: ^api.
             stateless: true
